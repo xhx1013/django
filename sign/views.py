@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from sign.models import Event
+from sign.models import Event,Guest
 
 
 # Create your views here.
@@ -40,11 +40,32 @@ def event_manage(request):
     return render(request, 'event_manage.html', {"user": username,"events":event_list})
 
 
+# 嘉宾管理
+@login_required()
+def guest_manage(request):
+    # username = request.COOKIES.get('user','')   # 读取浏览器cookie
+
+    guest_list = Guest.objects.all()
+    # print(guest_list)
+    username = request.session.get('user', '')  # 读取浏览器session
+    return render(request, 'guest_manage.html', {"user": username,"guests":guest_list})
+
+
 # 发布会名称搜索
 @login_required()
-def search_name(request):
+def event_search_name(request):
     # username = request.COOKIES.get('user','')   # 读取浏览器cookie
     username = request.session.get('user', '')  # 读取浏览器session
     search_name = request.GET.get("name","")
     event_list = Event.objects.filter(name__contains=search_name)
     return render(request, 'event_manage.html', {"user": username,"events":event_list})
+
+
+# 嘉宾名称搜索
+@login_required()
+def guest_search_name(request):
+    # username = request.COOKIES.get('user','')   # 读取浏览器cookie
+    username = request.session.get('user', '')  # 读取浏览器session
+    search_name = request.GET.get("realname","")
+    guest_list = Guest.objects.filter(name__contains=search_name)
+    return render(request, 'guest_manage.html', {"user": username,"guests":guest_list})
