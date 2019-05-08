@@ -35,5 +35,16 @@ def login_action(request):
 def event_manage(request):
     # username = request.COOKIES.get('user','')   # 读取浏览器cookie
     event_list = Event.objects.all()
+    print(event_list)
     username = request.session.get('user', '')  # 读取浏览器session
-    return render(request, 'event_manage.html', {"user": username,"event":event_list})
+    return render(request, 'event_manage.html', {"user": username,"events":event_list})
+
+
+# 发布会名称搜索
+@login_required()
+def search_name(request):
+    # username = request.COOKIES.get('user','')   # 读取浏览器cookie
+    username = request.session.get('user', '')  # 读取浏览器session
+    search_name = request.GET.get("name","")
+    event_list = Event.objects.filter(name__contains=search_name)
+    return render(request, 'event_manage.html', {"user": username,"events":event_list})
